@@ -1,12 +1,14 @@
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+const util = require('util');
+
 // var udpServer = require('./udpServer');
 
 
 var PORT = 4012;
 // var HOST = '0.0.0.0';
-var HOST = '10.20.20.114';
+var HOST = '10.20.20.102';
 
 var dgram = require('dgram');
 var udpServer = dgram.createSocket('udp4');
@@ -45,7 +47,8 @@ io.on('message', function(message, remote) {
 });
 
 udpServer.on('message', function(message, remote) {
-    var msg = new TextDecoder().decode(message);
+    var msg = new util.TextDecoder().decode(message);
+    console.log(msg);
     sendMsg(msg.replace(/\n/g,''));
     // io.sockets.emit('message', message);
 
@@ -55,7 +58,7 @@ udpServer.on('message', function(message, remote) {
 
 
 function sendMsg(msg){
-    const parsed = {grade: msg, ts: Date.now()};
+    const parsed = {score: msg, timestamp: Date.now()};
     io.sockets.emit('message', parsed);
     console.log('msg sent');
 }
